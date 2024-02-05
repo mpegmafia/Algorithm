@@ -28,15 +28,15 @@ public class Main {
 		}
 		
 		while(!q.isEmpty()) {
-			for(int i=1; i<=K; i++) {
-				if(i==K) {
-					if(i>=q.size()) {
-						i = i%q.size();
-					}
+			for(int i=1; i<=K; i++) { //K번돌기
+				if(i==K) { //K번째일때 죽이기
+//					if(i>=q.size()) {
+//						i = i%q.size(); //어차피 q.offer로 계속 순회하므로 나머지처리할필요가음슴;;
+//					}
 					ans.add(q.poll());
 					break;
 				}
-				q.offer(q.poll());
+				q.offer(q.poll()); //1부터 K-1까지는 뒤로보내기
 			}
 		}
 		
