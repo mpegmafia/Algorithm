@@ -54,9 +54,11 @@ public class Main {
 				stack.push(i);
 			}
 		}
+		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<N; i++) {
-			System.out.print(ans[i]+" ");
+			sb.append(ans[i]+" ");
 		}
+		System.out.println(sb);
 
 
 
