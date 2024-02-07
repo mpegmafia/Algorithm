@@ -50,12 +50,14 @@ public class Main {
 
 		rotate();
 		
+		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<N; i++) {
 			for(int j=0; j<M; j++) {
-				System.out.print(graph[i][j]+" ");
+				sb.append(graph[i][j]+" ");
 			}
-			System.out.println();
+			sb.append("\n");
 		}
+		System.out.println(sb);
 
 	}
 	
@@ -64,6 +66,7 @@ public class Main {
 		
 		for(int i=0; i<s; i++) {//파고들어가는 횟수
 			int rotate = R%(((N-i*2)*(M-i*2))-(((N-i*2)-2)*((M-i*2)-2)));			
+			
 			
 			for(int k=0; k<rotate; k++) {
 				
