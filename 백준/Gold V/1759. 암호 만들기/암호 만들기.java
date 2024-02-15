@@ -3,80 +3,96 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 	/*
-	 * 서로다른 C개의 문자들중 서로다른 L개의 문자들을 조합하여 암호 구성
-	 * 최소 한개의 모음과 두개의 자음으로 이루어짐
-	 * 문자 오름차순으로 출력
-	 *  3<=L<=C<=15
-	 *  순열  or 재귀
-	 *  이 아니라 조합이었음bac는어차피 abc로 출력되기때문에
-	 *  그러면 모음,자음 체크랑 문자 사전순으로만 출력하면됨
-	 *  
+	 * 암호문의 길이 L
+	 * 최소 한개의 모음과 두개의 자음이 있어야함
+	 * 알파벳은 사전순으로 싹다 정렬
+	 * 주어지는 문자의 종류는 C가지
+	 * 3<=L<=C<=15임
+	 * 입력:
+	 * 	L, C
+	 * 	공백을 기준으로 C가지 문자들이 주어짐
+	 * 출력:
+	 * 	각줄에 하나씩 사전순으로 가능성있는 암호 출력
+	 * ----------
+	 * 처음에 주어지는 문자열들을 정렬한 후 조합을 돌리면 애초에 사전순으로 이루어짐
+	 * 모음, 자음 체크만 해주면 된다
 	 */
+	
 	static int L;
 	static int C;
-	static char[] candidate;
-	static char[] picked;
-	static List<Character> vowel = Arrays.asList('a','e','i','o','u');
+	static String vowels = "aeiou";
+	static List<String> ans = new ArrayList<String>();
+	static int[] picked;
+	static char[] letters;
 	static StringBuilder sb = new StringBuilder();
-	static List<String> ans = new ArrayList<>();
-
+	
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
-		st = new StringTokenizer(br.readLine());
 		
-		L = Integer.parseInt(st.nextToken()); // 비밀번호 길이
-		C = Integer.parseInt(st.nextToken()); // 주어지는 문자열의 길이
-		candidate = br.readLine().replace(" ", "").toCharArray();
-		picked = new char[L];
-		combi(0,0);
-		Collections.sort(ans);
-		for(int i=0; i<ans.size();i++) {
-			System.out.println(ans.get(i));
+		st = new StringTokenizer(br.readLine());
+		L = Integer.parseInt(st.nextToken());
+		C = Integer.parseInt(st.nextToken());
+		picked = new int[L];
+		
+		st = new StringTokenizer(br.readLine());
+		letters = new char[C];
+		for(int i=0; i<C; i++) {
+			letters[i] = st.nextToken().charAt(0);
 		}
+		
+		Arrays.sort(letters);
+//		System.out.println(Arrays.toString(letters));
+		combi(0,0);
+		
+		System.out.println(sb);
+		
 		
 
 	}
 	
-	public static void combi(int depth, int start) {
+	public static void combi (int depth, int start) {
 		if(depth==L) {
-			if (chk()) {
-				char[] s = Arrays.copyOf(picked, picked.length);
-				Arrays.sort(s);
-				ans.add(String.valueOf(s));
+			String s = "";
+			for(int i=0; i<L; i++) {
+				s = s+letters[picked[i]];
 			}
-					
+			if(chk(s)) {
+				sb.append(s+"\n");
+			}
 			return;
-		}
-		
-		for(int i=start; i<C; i++) {
-			picked[depth] = candidate[i];
-			combi(depth+1, i+1);		
 			
 		}
 		
-	}
-	public static boolean chk() {
-		int vowels = 0;
-		int consonant = 0;
-		for(int i=0; i<L; i++) {
-			if (vowel.contains(picked[i])){
-				vowels+=1;
-			} else {
-				consonant+=1;
-			}
-//			System.out.println("picked :"+Arrays.toString(picked)+ "vowel :"+ vowels+ "con : "+consonant);
-			if(vowels>=1&&consonant>=2) return true;			
+		for(int i=start; i<C; i++) {
+			picked[depth] = i;
+			combi(depth+1, i+1);			
+			
 		}
-		return false;
+		
 		
 	}
+	
+	public static boolean chk(String s) {
+		int vowel = 0;
+		int consonant = 0;
+		for(int i=0; i<L; i++) {
+			if(vowels.contains(String.valueOf(s.charAt(i)))) {
+				vowel++;
+			}
+			else consonant++;
+		}
+		if(vowel>=1&&consonant>=2) return true;
+		else return false;
+		
+		
+	}
+	
 	
 
 }
