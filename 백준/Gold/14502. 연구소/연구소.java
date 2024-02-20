@@ -20,7 +20,6 @@ public class Main {
 	static int M;
 	static int[][] graph;
 	static int ans;
-	static int[] picked;
 	static int[][] copygraph;
 	
 	static int[] dx = {1,0,-1,0};
@@ -36,7 +35,6 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		graph = new int[N][M];
 		copygraph = new int[N][M];
-		picked = new int[3];
 		for(int i=0; i<N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j=0; j<M; j++) {
@@ -56,11 +54,6 @@ public class Main {
 				copygraph[i] = Arrays.copyOf(graph[i], graph[i].length);
 			}
 			
-			for(int i=0; i<3; i++) {
-				int r = picked[i]/M;
-				int c = picked[i]%M;
-				copygraph[r][c] = 1;
-			}
 			ans = Math.max(ans,BFS(copygraph));
 			return;
 		}
@@ -69,8 +62,9 @@ public class Main {
 			int r = i/M;
 			int c = i%M;
 			if(graph[r][c] != 0) continue;
-			picked[depth] = i;
+			graph[r][c] = 1;
 			combi(depth+1, i+1);
+			graph[r][c] = 0;
 		}
 		
 		
