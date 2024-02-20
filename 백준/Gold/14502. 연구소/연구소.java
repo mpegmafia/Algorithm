@@ -91,7 +91,9 @@ public class Main {
 		for(int i=0; i<4; i++) {
 			int ny = y +dy[i];
 			int nx = x +dx[i];
-			if(isInRange(ny, nx)&&copygraph[ny][nx]==0) {
+			
+			if(ny<0||ny>=N||nx<0||nx>=M) continue;
+			if(copygraph[ny][nx]==0) {
 				DFS(ny, nx);
 			}
 		}
@@ -107,8 +109,5 @@ public class Main {
 			}
 		}
 		return temp;
-	}
-	public static boolean isInRange(int y, int x) {
-		return y>=0&&y<N&&x>=0&&x<M;
 	}
 }
