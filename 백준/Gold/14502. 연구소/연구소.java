@@ -60,8 +60,8 @@ public class Main {
 	public static void combi(int depth, int start) {
 		if(depth==3) {
 			for(int i=0; i<N; i++) {
-				copygraph[i] = Arrays.copyOf(graph[i], graph[i].length);
-			}
+			    System.arraycopy(graph[i], 0, copygraph[i], 0, M);
+		    }
 			
 			for(Node n : viruses) {
 				int y = n.y;
