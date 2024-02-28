@@ -40,8 +40,8 @@ public class Solution {
 		}
 	}
 	
-	static int[] dy = {0,1,0,-1,0};
-	static int[] dx = {1,0,-1,0,0};
+	static int[] dy = {0,1,0,-1};
+	static int[] dx = {1,0,-1,0};
 	static List<cpu> list;
 	static int ans;
 	static int ans2;
@@ -59,7 +59,7 @@ public class Solution {
 				for(int j=0; j<N; j++) {
 					graph[i][j] = Integer.parseInt(st.nextToken());
 					if(graph[i][j]==1) {
-						if(!(i==0||i==N-1||j==0||j==N-1)) list.add(new cpu(i, j));
+						if(!(i==0||i==N-1||j==0||j==N-1)) list.add(new cpu(i, j)); //벽에 붙어있는 놈은 안받아도된다
 					}
 				}
 			}
@@ -77,30 +77,22 @@ public class Solution {
 	}
 	
 	public static void DFS(int start, int powered, int wired) {
-		if(start==list.size()) {
-//			for(int i=0; i<N; i++) {
-//				System.out.println(Arrays.toString(graph[i]));
-//			}
-//			System.out.println();
+		if(start==list.size()) { // 리스트 다돌았으면 갯수 세서 리턴
 			if(powered>ans||(powered==ans&&wired<ans2)) {
 				ans = powered;
 				ans2 = wired;
 			}
-//			chk(powered);
 			return;
 		}
 		
-//		for(int i=0; i<N; i++) {
-//			System.arraycopy(map[i], 0, copygraph[i], 0, N);
-//		}
-//		
-		cpu c = list.get(start);
-		DFS(start+1, powered, wired);
+		cpu c = list.get(start); // 리스트 순서대로 방향설정해주기
+		DFS(start+1, powered, wired); // 먼저 아무것도 설치안하는놈을 뿌려준다
 		
 		for(int i=0; i<4; i++) {
+			
 			int wirenum = isPossible(c.y, c.x, i)-1;
-			if(wirenum>0) {
-//				forward(c, copygraph);
+			
+			if(wirenum>0) { // 그다음 설치가 가능할때만 dfs를 돌고 불가능하다면 아무것도 설치 안하는 것이므로 위에서 했으니까 재귀를 돌지 않는다.
 				DFS(start+1, powered+1, wired+wirenum);
 				backward(c, i);
 			} 
@@ -110,20 +102,6 @@ public class Solution {
 		
 	}
 	
-	public static void chk(int powernum) {
-		if(ans>powernum) return;
-		int wire = 0;
-		for(int i=0; i<N; i++) {
-			for(int j=0; j<N; j++) {
-				if(graph[i][j]==2) wire++;
-			}
-		}
-		
-		if (ans<powernum||(ans==powernum&&wire<ans2)) {
-			ans = powernum;
-			ans2 = wire;
-		}
-	}
 	
 	public static void backward(cpu c, int dir ) {
 		int y = c.y;
@@ -138,18 +116,6 @@ public class Solution {
 		
 	}
 	
-	public static void forward(cpu c, int[][] map) {
-//		int y = c.y;
-//		int x = c.x;
-////		int dir = c.dir;
-//		
-//		while(true) {
-//			y = y+dy[dir];
-//			x = x+dx[dir];
-//			if(!isInRange(y, x)) break;
-//			map[y][x] = 2;
-//		}
-	}
 	
 	public static int isPossible(int y, int x, int dir) {
 		
@@ -165,25 +131,6 @@ public class Solution {
 		} else {
 			return 0;
 		}
-		
-//		while(true) {
-//			y = y +dy[dir];
-//			x = x +dx[dir];
-//			if(!isInRange(y, x)) {
-//				q.clear();
-//				return true;
-//			}
-//			if(map[y][x]==1||map[y][x]==2) break;
-//			q.offer(new int[] {y, x});
-//			map[y][x] = 2;
-//		}
-//		while(!q.isEmpty()) {
-//			int ny = q.peek()[0];
-//			int nx = q.peek()[1];
-//			q.poll();
-//			graph[ny][nx] = 0;
-//		}
-//		return false;
 	}
 	
 	public static boolean isInRange(int y, int x) {
