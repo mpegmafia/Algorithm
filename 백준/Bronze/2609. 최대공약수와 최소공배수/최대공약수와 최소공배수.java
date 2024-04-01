@@ -16,24 +16,20 @@ public class Main {
 		int p = Math.max(a, b);
 		int q = Math.min(a, b);
 		
-		int max =  1;//최대공약수
-		int min =  0;//최소공배수
+		int max =  gcd(p, q); //최대공약수
+		int min =  p*q/max;   //최소공배수
 		
-		for(int i=q; i>=1; i--) {
-			if(p%i==0&&q%i==0) {
-				max = i;
-				break;
-			}
-		}
-		
-		for(int i=max; i<= p*q; i++) {
-			if(i%p==0&&i%q==0) {
-				min = i;
-				break;
-			}
-		}
 		System.out.println(max);
 		System.out.println(min);
+		
+		
+	}
+	
+	public static int gcd(int a, int b) {
+		
+		if(a%b==0) return b;
+		
+		return gcd(b, a%b);
 		
 		
 	}
