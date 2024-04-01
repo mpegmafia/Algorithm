@@ -1,18 +1,22 @@
-import java.util.Arrays;
-
+import java.util.*;
+import java.io.*;
 class Solution {
     public int solution(int k, int[] tangerine) {
-        int[] new_tangerine = new int[10000001];
-		for(int i=0; i<tangerine.length; i++) {
-			new_tangerine[tangerine[i]]++;
-		}
-		int answer = 0;
-		Arrays.sort(new_tangerine);
-		for(int i=new_tangerine.length-1; i>=0; i--) {
-			k -= new_tangerine[i];
-			answer++;
-			if(k<=0) break;
-		}
-		return answer;
+        int answer = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int size : tangerine){
+		    map.put(size, map.get(size)==null? 1: map.get(size)+1); 
+        }
+        
+		List<Integer> list = new ArrayList<>(map.keySet());
+		Collections.sort(list, (a,b)->Integer.compare(map.get(b), map.get(a)));
+        int temp = 0;
+        for(Integer size : list){
+            temp+=map.get(size);
+            answer++;
+            if(temp>=k) break;
+        }
+        
+        return answer;
     }
 }
