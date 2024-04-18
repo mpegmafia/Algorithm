@@ -37,6 +37,14 @@ public class Main {
 	 * 정방향은 그냥 서브스트링
 	 * 역방향은 끝에서부터 /2의 전까지 하나씩 추가해주기
 	 * 그다음 equals로 비교후 같으면 1, 다르면 0 리턴
+	 * 0 4
+	 * 0 1 2 3 4 -> [1][3]이 dp여야함
+	 * 자기자신은 1
+	 * 1차이라면 서로 같은지만 확인
+	 * 2이상 차이라면  시작+1, 끝-1을 확인하면됨
+	 * 그렇게 하려면 열 기준으로 돌아야함 혹은 행을 끝에서부터 도는 방법이 있다.
+	 *  
+	 * 
 	 */
 
 	public static void main(String[] args) throws IOException{
@@ -44,23 +52,25 @@ public class Main {
 		StringTokenizer st;
 		int N = Integer.parseInt(br.readLine()); //수열의 크기
 		int[] nums = new int[N];
-		String ord = "";
-		String rev = "";
 		st = new StringTokenizer(br.readLine());
 		for(int i=0; i<N; i++) {
 			nums[i] = Integer.parseInt(st.nextToken());
 		}
 		
-//		int[][] dp = new int[N][N];
-//		
-//		for(int i=0; i<N; i++) {
-//			String str = "";
-//			for(int j=i; j<N; j++) {
-//				str += nums[j];
-//				dp[i][j] = chk(str);
-//				
-//			}
-//		}
+		int[][] dp = new int[N][N];
+		
+		for(int i=0; i<N; i++) {
+			dp[i][i] = 1;
+		}
+		
+		for(int i=0; i<N-1; i++) {
+			if(nums[i]==nums[i+1]) dp[i][i+1] =1;
+		}
+		for(int j=0; j<N; j++) {
+			for(int i=0; i<j; i++) {
+				if(nums[i]==nums[j]&&dp[i+1][j-1]==1) dp[i][j] = 1;
+			}
+		}
 		
 		int M = Integer.parseInt(br.readLine());
 		StringBuilder sb = new StringBuilder();
@@ -69,9 +79,7 @@ public class Main {
 			st = new StringTokenizer(br.readLine());
 			int S = Integer.parseInt(st.nextToken())-1; //1부터 시작함
 			int E = Integer.parseInt(st.nextToken())-1; //N까지 가능
-			if(chk2(nums, S, E)) sb.append(1+"\n");
-			else sb.append(0+"\n");
-//			sb.append(dp[S][E]+"\n");
+			sb.append(dp[S][E]+"\n");
 		}
 		
 		System.out.println(sb);
@@ -90,9 +98,6 @@ public class Main {
 			right--;
 		}
 		return true;
-		
-		
-		
 		
 	}
 	
