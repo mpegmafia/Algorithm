@@ -21,6 +21,8 @@ import java.util.StringTokenizer;
     셋째줄엔 나이트가 가야하는 칸
 ============================
 visited 배열이랑 그 단계형 BFS였나 머시기로 고고
+===============
+왜 나는 350~400ms 가 나오지 다른 코드는 200ms인데
  */
 public class Main {
 
@@ -57,7 +59,7 @@ public class Main {
         boolean[][] visited = new boolean[l][l];
         Queue<int[]> q = new ArrayDeque<int[]>();
         q.add(current);
-        //visited[current[0]][current[1]] = true;
+        visited[current[0]][current[1]] = true;
         int count = 0;
 
         OuterLoop:
@@ -70,13 +72,13 @@ public class Main {
                 int cy = curr[0];
                 int cx = curr[1];
                 if (cy == target[0] && cx == target[1]) break OuterLoop;
-                if (visited[cy][cx]) continue;
-                visited[cy][cx] = true;
                 for(int j=0; j<8; j++){
                     int ny = cy+dy[j];
                     int nx = cx+dx[j];
                     if(!isInRange(l, ny, nx)) continue;
+                    if(visited[ny][nx]) continue;
                     q.add(new int[]{ny, nx});
+                    visited[ny][nx] = true;
                 }
             }
             count++;
