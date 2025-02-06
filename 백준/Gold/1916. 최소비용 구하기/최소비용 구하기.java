@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /*
 A에서 B까지 가는데 걸리는 최소 비용
@@ -57,6 +54,28 @@ public class Main {
 
     private static int Dijkstra(int start, int end) {
         boolean[] visited = new boolean[N+1];
+        PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> a[1] - b[1]);
+        int[] dist = new int[N+1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[start] = 0;
+        pq.offer(new int[]{start, 0});
+        while(!pq.isEmpty()){
+            int[] cur = pq.poll();
+            if(visited[cur[0]]) continue;
+            visited[cur[0]] = true;
+            if(cur[0]==end) break;
+            for(int[] adj : adjList.get(cur[0])){
+                int nextW = cur[1]+adj[1];
+                if(nextW<dist[adj[0]]){
+                    dist[adj[0]] = nextW;
+                    pq.offer(new int[]{adj[0], nextW});
+                }
+            }
+        }
+        return dist[end];
+
+        /* 최적화 X (중복값이 들어감)
+        boolean[] visited = new boolean[N+1];
         visited[start] = true;
         PriorityQueue<int[]> pq = new PriorityQueue<>( (a,b) -> a[1] - b[1]);
         pq.add(new int[]{start,0});
@@ -74,5 +93,9 @@ public class Main {
             }
         }
         return tmp;
+         */
+
+
+
     }
 }
