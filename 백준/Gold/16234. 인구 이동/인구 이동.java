@@ -2,154 +2,128 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
+/*
+인구차이가 L명 이상 R명 이하라면 두나라 국경선 개방
+국경선이 모두 열렸다면 인구 이동 시작
+만약 3개이상 나라가 인접한 칸만을 이용해 이동한다면 연합이라 칭함
+연합을 이루고 있는 각 칸의 인구수는 연합의 인구수 / 연합을 이루고 있는 칸의 개수가 된다.(소수점은 버림)
+연합을 해체하고 모든 국경선을 닫는다
+인구이동이 며칠동안 발생하는가?
+============================
+입력:
+    N, L, R (1<=N<=50, 1<=L<=R<=100)
+    N줄동안 graph 상태
+============================
+그래프 상태를 두개 써서 구현?
+- 어디까지 국경이 이어지는지 체크해야함
+- 이어지는 국경끼리 한번에 더한 후 나눈 값으로 인구 재분배를 해줘야함
+1. 2중포문으로 완탐후 (아래랑 오른쪽만 보면 됨) 만약 L이상 R차이가 난다면 flag값 트루로 변경
+2. 그 후 해당 좌표를 BFS로 돌려서 L이상 R이하의 모든 좌표들을 visited에 넣음
+3. 다음으로 visited에서 true라면 해당 좌표부터 BFS로 타고 들어가서 플러드필로 모든 값과 cnt를 받아놓고 좌표들도 다른 큐에 저장해놓음
+4. 그 후 다른 그래프에 그 좌표값들을 그대로 저장.
+5. 반복문 다시돌때 그래프 깊은 복사, visited 초기화
+ */
 public class Main {
-	/*
-	 * N*N 크기의 땅, 각 값은 인구수
-	 * 상하좌우로 인접해서 국경선이 존재함
-	 * 국경선을 공유하는 두 나라의 인구차이가 L명 이상 R명 이하라면 두 나라가 공유하는 국경선을 하루동안만 연다
-	 * 국경선이 모두 열렸다면 인구이동을 시작한다
-	 * 국경선이 열려있는 모든 인접한 칸은 그 날 하루동안 연합임
-	 * 연합의 인구수/연합을 이루는 칸의 개수가 연합의 각 칸의 인구수가 됨 (소수점은 버린다)
-	 * 연합을 해체하고 닫는다
-	 * 이렇게 인구이동이 며칠동안 이루어 나는지 알아내기
-	 * ---------------------------------------
-	 * 그래프를 bfs로 탐색한다.
-	 * 만약 사방탐색했는데 국경을 열어야한다면... 어디까지 열어야하는지 사방탐색으로 계속 가보기
-	 * ->어디서부터 어디까지가 연결되어있는곳인지 모르지만 굳이 알필요가 없는 것이 나올때마다 바로바로 처리하면 됨
-	 * 사방탐색후에 개방해야한다면 먼저 거기부터 타고들어가서 해결하기 그 후 visited처리
-	 * 리스트에 담아놓기? 그 후에 갯수와 인구수값 다 받은 후 한번에 타다닥 바꾸기?
-	 * ->바로바로 바꾸면 안되는 이유 : 국경을 한번에 개방해야하는데 인구수가 계속 바뀌니까 처리해야하는 값도 달라짐;;
-	 * -> 그래프 새로 그리기?
-	 */
-	
-	static int N, L, R;
-	static int[][] graph;
 
-	static int[] dy = {-1,0,1,0};
-	static int[] dx = {0,1,0,-1};
-	public static void main(String[] args) throws IOException {
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		L = Integer.parseInt(st.nextToken());
-		R = Integer.parseInt(st.nextToken());
-		
-		graph = new int[N][N];
-		
-		for(int i=0; i<N; i++) {
-			st = new StringTokenizer(br.readLine());
-			for(int j=0; j<N; j++) {
-				graph[i][j] = Integer.parseInt(st.nextToken());
-			}
-		}
-		
-		int ans = BFS();
-//		System.out.println(Arrays.deepToString(graph));
-		System.out.println(ans);
+    static int N,L,R;
+    static int[][] graph, copyGraph;
+    static int[] dy = {-1,0,1,0};
+    static int[] dx = {0,1,0,-1};
+    static boolean[][] visited;
 
-	}
-	
-	public static int BFS() {
-		Queue<int[]> q2 = new ArrayDeque<int[]>();
-		
-		
-		
-		int cnt = 0;
-		
-		while(true) {
-			int[][] copymap = new int[N][N];
-			for(int i=0; i<N; i++) {
-				System.arraycopy(graph[i], 0, copymap[i], 0, N);
-			}
-			boolean flag = false;
-			boolean[][] visited = new boolean[N][N];
-			for(int i=0; i<N; i++) {
-				for(int j=0; j<N; j++) {
-					for(int d=0; d<4; d++) {
-						int ny = i+dy[d];
-						int nx = j+dx[d];
-						if(!isInRange(ny,nx)) continue;
-//						if(visited[ny][nx]) continue;
-						int gap = Math.abs(graph[i][j]-graph[ny][nx]);
-						if(gap>=L&&gap<=R) {
-							flag = true;
-							q2.offer(new int[] {i,j});
-						}
-						
-					}
-					
-					
-				}
-			}
-			if(!flag) break;
-			while(!q2.isEmpty()) {
-				int[] cur = q2.poll();
-				copymap = border(cur[0], cur[1], visited, copymap);
-			}
-			graph = copymap;
-			cnt++;
-			
-		}
-		
-		return cnt;
-	}
-	static int[][] border(int y, int x, boolean[][] visited, int[][] map) {
-		Queue<int[]> q = new ArrayDeque<int[]>();
-		
-		q.offer(new int[] {y, x});
-		
-		List<int[]> list = new ArrayList<>();
-		int count = 0;
-		int population = 0;
-		while(!q.isEmpty()) {
-			int cy = q.peek()[0];
-			int cx = q.peek()[1];
-			q.poll();
-			if(visited[cy][cx]) continue;
-			visited[cy][cx] = true;
-			population += graph[cy][cx];
-			count++;
-			list.add(new int[] {cy, cx});
-//			System.out.println("cy : "+cy+" cx: "+cx);
-			
-			for(int i=0; i<4; i++) {
-				int ny = cy+dy[i];
-				int nx = cx+dx[i];
-				if(!isInRange(ny, nx)) continue;
-				if(visited[ny][nx]) continue;
-				int gap = Math.abs(graph[cy][cx]-graph[ny][nx]);
-				if(gap>=L&&gap<=R) {
-					q.offer(new int[] {ny, nx});
-				}				
-			}
-			
-		}
-		int size = list.size();
-		if(size<=1) return map;
-		
-		for(int i=0; i<size; i++) {
-			int[] cur = list.remove(0);
-			map[cur[0]][cur[1]] = population/count;
-		}
-//		System.out.println(Arrays.deepToString(graph));
-		return map;
-		
-	}
-	
-	
-	
-	
-	
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        L = Integer.parseInt(st.nextToken());
+        R = Integer.parseInt(st.nextToken());
+        visited = new boolean[N][N];
+        graph = new int[N][N];
+        copyGraph = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < N; j++) {
+                graph[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+        int ans = 0;
+        boolean flag = true;
+        while(flag){
+            flag = false;
+            for(int i=0; i<N; i++){
+                for(int j=0; j<N; j++){
+                    if(visited[i][j]) continue;
+                    if(isUnited(i,j)){
+                        flag = true;
+                        visited[i][j] = true;
+                        floodFill(i,j);
+                    } else copyGraph[i][j] = graph[i][j];
+                }
+            }
+            if(flag){
+                visited = new boolean[N][N];
+                for(int i=0; i<N; i++){
+                    System.arraycopy(copyGraph[i], 0, graph[i], 0, N);
+                }
+                copyGraph = new int[N][N];
+                ans++;
+            }
+        }
+        System.out.println(ans);
 
-	static boolean isInRange(int y, int x) {
-		return y>=0&&y<N&&x>=0&&x<N;
-	}
+    }
+
+
+    public static void floodFill(int y, int x){
+        Queue<int[]> q =new ArrayDeque<>();
+        Queue<int[]> q2 =new ArrayDeque<>();
+        q.offer(new int[]{y,x});
+        q2.offer(new int[]{y,x});
+        int cnt = 1;
+        int sum = graph[y][x];
+        while(!q.isEmpty()){
+            int cy = q.peek()[0];
+            int cx = q.peek()[1];
+            q.poll();
+            for(int i=0; i<4; i++){
+                int ny = cy+dy[i];
+                int nx = cx+dx[i];
+                if(!isInRange(ny, nx)) continue;
+                if(visited[ny][nx]) continue;
+                int diff = Math.abs(graph[cy][cx] - graph[ny][nx]);
+                if(diff<L || diff>R) continue;
+                visited[ny][nx] = true;
+                q.offer(new int[]{ny, nx});
+                cnt++;
+                sum += graph[ny][nx];
+                q2.offer(new int[]{ny,nx});
+            }
+        }
+        int population = sum/cnt;
+        while(!q2.isEmpty()){
+            int cy = q2.peek()[0];
+            int cx = q2.peek()[1];
+            q2.poll();
+            copyGraph[cy][cx] = population;
+        }
+    }
+    //아래, 오른쪽에 인접한 나라 있는지 확인
+    public static boolean isUnited(int y, int x){
+        for(int i=1; i<3; i++){
+            int ny = y+dy[i];
+            int nx = x+dx[i];
+            if(!isInRange(ny,nx)) continue;
+            int tmp = Math.abs(graph[y][x]-graph[ny][nx]);
+            if (tmp>=L && tmp<=R) return true;
+        }
+        return false;
+    }
+
+    public static boolean isInRange(int y, int x){
+        return y >= 0 && y < N && x >= 0 && x < N;
+    }
 }
