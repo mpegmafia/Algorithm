@@ -45,14 +45,6 @@ public class Main {
                 int a = Integer.parseInt(st.nextToken());
                 int b = Integer.parseInt(st.nextToken());
                 union(a, b);
-//                for(int j=1; j<=5; j++){
-//                    System.out.print("parents[i]"+ " : " + parents[j]+" ");
-//                }
-//                System.out.println();
-//                for(int j=1; j<=5; j++){
-//                    System.out.print("cnt[i]" + " : " + cnt[j]+" ");
-//                }
-//                System.out.println();
             }
             else {
                 int c = Integer.parseInt(st.nextToken());
@@ -60,23 +52,14 @@ public class Main {
             }
         }
         System.out.println(sb);
-
-
-
     }
 
     static void union(int a, int b){
         int findA = find(a);
         int findB = find(b);
         if(findA != findB){
-            if(findA<findB){
-                parents[findB] = findA;
-                cnt[findA] = cnt[findB]+cnt[findA];
-            } else {
-                parents[findA] = findB;
-                cnt[findB] = cnt[findA]+cnt[findB];
-                // Math.max(cnt[findA]+1, cnt[findB]+1);
-            }
+            parents[findB] = findA;
+            cnt[findA] += cnt[findB];
         }
     }
 
