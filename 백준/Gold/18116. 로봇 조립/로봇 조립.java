@@ -24,7 +24,7 @@ BFS를 돌린다면 만약 50만개가 서로 연결되어 있다고 가정할�
 유니온 노드갯수 저장할 때 부모노드 +1 혹은 자식노드 +1 한것중 더 큰 갯수로 저장
  */
 public class Main {
-    static final int MAX = 10000001;
+    static final int MAX = 1000001;
     static int[] parents = new int[MAX];
     static int[] cnt = new int[MAX];
 
