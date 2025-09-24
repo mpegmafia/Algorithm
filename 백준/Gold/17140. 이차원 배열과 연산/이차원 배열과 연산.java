@@ -93,7 +93,7 @@ public class Main {
         HashMap<Integer, Integer> hashMap = new HashMap<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
         int tmp = 0;
-        for(int i=0; i<100; i++){
+        for(int i=0; i<maxR; i++){
             hashMap.clear();
             pq.clear();
             for(int j=0; j<100; j++){
@@ -120,7 +120,7 @@ public class Main {
         HashMap<Integer, Integer> hashMap = new HashMap<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
         int tmp = 0;
-        for(int j=0; j<100; j++){
+        for(int j=0; j<maxC; j++){
             hashMap.clear();
             pq.clear();
             for(int i=0; i<100; i++){
